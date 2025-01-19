@@ -1,0 +1,23 @@
+.Logo {
+    margin: 0;
+    color: white;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke-color: #114d96;
+    -webkit-text-stroke-width: 0.02em;
+    text-transform: uppercase;
+    cursor: pointer;
+    user-select: none;
+    transition-property: filter;
+    transition-duration: 0.5s;
+    font-size: 3.24em;
+    letter-spacing: 0.03em;
+    font-weight: 900;
+    transform: scaleY(0.93);
+    font-family: var(--font-anton);
+}
+
+.MainLogo {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
