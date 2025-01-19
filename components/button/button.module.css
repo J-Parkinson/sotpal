@@ -15,6 +15,7 @@
     -webkit-text-stroke-color: #114d96;
     -webkit-text-stroke-width: 0.05em;
     font-family: var(--font-anton);
+    width: 200px;
 }
 
 .Button:hover {
