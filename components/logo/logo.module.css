@@ -21,4 +21,14 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    animation: MainLogoWiggle alternate 2s ease-in-out infinite;
+}
+
+@keyframes MainLogoWiggle {
+    from {
+        transform: rotate(-7deg);
+    }
+    to {
+        transform: rotate(7deg);
+    }
 }
