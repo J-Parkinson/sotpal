@@ -1,5 +1,5 @@
 import './globals.css'
-import { Inter } from 'next/font/google'
+import { Anton } from 'next/font/google'
 
 export const metadata = {
   metadataBase: new URL('https://sotpal.vercel.app'),
@@ -8,10 +8,11 @@ export const metadata = {
     'A website that implements the "Technical Difficulties" game "Two of these People Are Lying", with support for more people.',
 }
 
-const inter = Inter({
-  variable: '--font-inter',
+const anton = Anton({
+  variable: '--font-anton',
   subsets: ['latin'],
   display: 'swap',
+  weight: "400",
 })
 
 export default function RootLayout({
@@ -21,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.variable}>{children}</body>
+      <body className={anton.variable}>{children}</body>
     </html>
   )
 }
