@@ -1,6 +1,6 @@
 'use client'
 
-import {FC, ReactElement, useEffect, useState} from "react";
+import React, {FC, ReactElement, useEffect, useState} from "react";
 import animation from "./mount-animate.module.css"
 import classNames from "classnames";
 

@@ -1,5 +1,6 @@
 import './globals.css'
 import { Anton } from 'next/font/google'
+import React from "react";
 
 export const metadata = {
   metadataBase: new URL('https://sotpal.vercel.app'),

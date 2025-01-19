@@ -2,6 +2,7 @@
 
 import logo from "./logo.module.css";
 import AnimationWrapper from "@/components/styles/animation-wrapper";
+import React from "react";
 
 const Logo = ({ text }: { text: string }) => {
     return <h1 className={logo.Logo}>{text}</h1>;
