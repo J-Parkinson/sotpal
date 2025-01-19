@@ -13,7 +13,7 @@ interface ButtonProps {
 
 const Button: FC<ButtonProps> = ({ children, onClick, className, disabled }) => {
     return (
-        <button className={classNames(styles.Button, {[styles.DisabledButton]: disabled})} onClick={() => !disabled && onClick()}>
+        <button className={classNames(styles.Button, className, {[styles.DisabledButton]: disabled})} onClick={() => !disabled && onClick()}>
             {children}
         </button>
     );

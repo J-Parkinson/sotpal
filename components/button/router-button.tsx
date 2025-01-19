@@ -17,7 +17,7 @@ const RouterButton: FC<RouterButtonProps> = ({ children, href }) => {
 
     return (
         <Button
-            className={`${styles.Button} ${isPending ? 'cursor-not-allowed opacity-50' : ''}`}
+            className={`${styles.Button} ${isPending ? 'cursor-not-allowed' : ''}`}
             disabled={isPending}
             onClick={() => {
                 startTransition(() => {
