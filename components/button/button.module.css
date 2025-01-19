@@ -1,0 +1,50 @@
+.Button {
+  background: linear-gradient(135deg, #2a5d8188, #3c92b788);
+  border: 2px solid #fff;
+  color: white;
+  font-size: 24px;
+  letter-spacing: 2px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.15s linear;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+  outline: none;
+  -webkit-text-fill-color: white;
+  -webkit-text-stroke-color: #114d96;
+  -webkit-text-stroke-width: 0.05em;
+  font-family: var(--font-anton);
+  width: 200px;
+}
+
+.Button:hover {
+  background: linear-gradient(135deg, #1f4c6b88, #2e7aa588);
+  transform: translateY(-2px);
+  box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+.Button:active {
+  background: linear-gradient(135deg, #1f4c6bbb, #2e7aa5bb);
+  transform: translateY(2px);
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.Button.DisabledButton {
+  background: linear-gradient(135deg, #55555588, #79797988);
+  border: 2px solid #bbb;
+  color: grey;
+  cursor: default;
+  transform: none;
+  transition: none;
+  -webkit-text-fill-color: grey;
+  -webkit-text-stroke-color: #535353;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.Button.DisabledButton:active,
+.Button.DisabledButton:hover {
+  background: linear-gradient(135deg, #55555588, #79797988);
+  transform: none;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
