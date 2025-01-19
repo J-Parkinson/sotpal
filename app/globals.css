@@ -6,39 +6,37 @@
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
-  --font-anton: "Anton", sans-serif;
+  --font-anton: 'Anton', sans-serif;
 }
 
 body {
-    background:
-            radial-gradient(circle,
-            rgba(30, 90, 120, 0) 30%,
-            rgb(31, 122, 153) 90%
-            ),
-            repeating-linear-gradient(
-                    45deg,
-                    #1f7a99 0%,
-                    #287a8c 1%,
-                    #3ea1b5 1%,
-                    #4a9cac 2%
-            );
+  background: radial-gradient(circle, rgba(30, 90, 120, 0) 30%, rgb(31, 122, 153) 90%),
+    repeating-linear-gradient(45deg, #1f7a99 0%, #287a8c 1%, #3ea1b5 1%, #4a9cac 2%);
 
-    background-blend-mode: multiply;
+  background-blend-mode: multiply;
 
-    /* Separate background size for each layer */
-    background-size: auto, 1000px 1000px;
+  /* Separate background size for each layer */
+  background-size:
+    auto,
+    1000px 1000px;
 
-    /* Lock vignette, move only the stripes */
-    background-position: center, 0 0;
+  /* Lock vignette, move only the stripes */
+  background-position:
+    center,
+    0 0;
 
-    animation: moveStripes 15s linear infinite;
+  animation: moveStripes 15s linear infinite;
 }
 
 @keyframes moveStripes {
-    from {
-        background-position: center, 0 0;
-    }
-    to {
-        background-position: center, -1000px 0; /* Moves only the stripes */
-    }
+  from {
+    background-position:
+      center,
+      0 0;
+  }
+  to {
+    background-position:
+      center,
+      -1000px 0; /* Moves only the stripes */
+  }
 }

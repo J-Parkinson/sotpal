@@ -1,34 +1,34 @@
 .OnMount {
-    animation: OnMountAnimation 1s ease-in-out forwards;
+  animation: OnMountAnimation 1s ease-in-out forwards;
 }
 .OnUnmount {
-    animation: OnUnmountAnimation 0.5s ease-in-out forwards;
+  animation: OnUnmountAnimation 0.5s ease-in-out forwards;
 }
 
 @keyframes OnMountAnimation {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    60% {
-        opacity: 1;
-        transform: scale(1.05);
-    }
-    90% {
-        transform: scale(0.99);
-    }
-    100% {
-        transform: scale(1);
-    }
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  90% {
+    transform: scale(0.99);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 @keyframes OnUnmountAnimation {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-    100% {
-        transform: scale(0);
-        opacity: 0;
-    }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
 }

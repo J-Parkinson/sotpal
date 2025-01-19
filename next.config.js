@@ -2,10 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ["images.ctfassets.net"],
+    domains: ['images.ctfassets.net'],
   },
   compiler: {
-    removeConsole: process.env.NODE_ENV === "production", // Strip console.logs in production
+    removeConsole: process.env.NODE_ENV === 'production', // Strip console.logs in production
   },
 };
 
