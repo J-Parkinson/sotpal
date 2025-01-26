@@ -1,0 +1,97 @@
+erDiagram
+
+    %% Players and Lobbies Section
+    players {
+        UUID id "PK"
+        TEXT username "NOT NULL | idx_players_username_lobby"
+        TEXT avatar "NOT NULL | idx_players_avatar_lobby"
+        UUID lobby_id "NOT NULL FK(lobbies) ON DELETE CASCADE | idx_players_lobby"
+        TIMESTAMP joined_at "NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        SERIAL join_order "NOT NULL"
+    }
+
+    lobbies {
+        UUID id "PK"
+        TEXT lobby_code "NOT NULL | idx_lobbies_code"
+        TIMESTAMP created_at "NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        lobby_status_enum status "NOT NULL DEFAULT in_lobby"
+        UUID host_id "FK(players) ON DELETE SET NULL | idx_lobbies_host"
+    }
+
+    %% Games and Players Section
+    games {
+        UUID id "PK"
+        UUID lobby_id "NOT NULL FK(lobbies) ON DELETE CASCADE | idx_games_lobby"
+        TIMESTAMP created_at "NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        UUID guesser_rotation "FK(players) ON DELETE SET NULL | idx_games_guesser_rotation"
+        BOOLEAN rotating_guesser "NOT NULL DEFAULT FALSE"
+        win_condition_enum win_condition "DEFAULT best_of_rounds"
+        INT max_points "CHECK (max_points > 0) ONLY IF win_condition = first_to_points"
+        INT max_rounds "CHECK (max_rounds > 0) ONLY IF win_condition <> first_to_points"
+    }
+
+    game_stats {
+        UUID game_id "FK(games) ON DELETE CASCADE | idx_game_stats"
+        UUID player_id "FK(players) ON DELETE CASCADE | idx_game_stats"
+        INT rounds_won "NOT NULL DEFAULT 0 CHECK (rounds_won >= 0)"
+        INT correct_votes "NOT NULL DEFAULT 0 CHECK (correct_votes >= 0)"
+        INT points "GENERATED ALWAYS AS (rounds_won*100 + correct_votes*20) STORED"
+        INDEX idx_game_stats "(game_id, player_id)"
+    }
+
+    %% Rounds and Articles Section
+    rounds {
+        UUID id "PK"
+        UUID game_id "NOT NULL FK(games) ON DELETE CASCADE | idx_rounds_game"
+        INT round_number "NOT NULL CHECK (round_number > 0)"
+        UUID guesser_id "NOT NULL FK(players) ON DELETE SET NULL"
+        TIMESTAMP created_at "NOT NULL DEFAULT CURRENT_TIMESTAMP"
+        UUID article_id "FK(articles) ON DELETE SET NULL | idx_rounds_article"
+        INDEX idx_rounds "(game_id, round_number)"
+    }
+
+    articles {
+        UUID id "PK"
+        UUID game_id "NOT NULL FK(games) ON DELETE CASCADE | idx_articles_game"
+        UUID submitted_by "NOT NULL FK(players) ON DELETE CASCADE | idx_articles_submitted_by"
+        TEXT url "NOT NULL"
+    }
+
+    %% Votes Section
+    votes {
+        UUID round_id "NOT NULL FK(rounds) ON DELETE CASCADE | idx_votes_round"
+        UUID voter_id "NOT NULL FK(players) ON DELETE CASCADE | idx_votes_voter"
+        UUID voted_for "NOT NULL FK(players) ON DELETE CASCADE | idx_votes_voted_for"
+        BOOLEAN is_correct "NOT NULL DEFAULT FALSE"
+        INDEX idx_votes "(round_id, voter_id)"
+    }
+
+    %% Relationships (Foreign Keys)
+    games ||--|| lobbies : "One-to-One ON DELETE CASCADE"
+    game_stats }|--|| games : "Many-to-One ON DELETE CASCADE"
+    game_stats }|--|| players : "Many-to-One ON DELETE CASCADE"
+
+    players }|--|| lobbies : "Many-to-One ON DELETE CASCADE"
+    lobbies }|--|| players : "One-to-Many (host_id) ON DELETE SET NULL"
+
+    rounds }|--|| games : "Many-to-One ON DELETE CASCADE"
+    rounds }|--|| players : "Many-to-One (guesser_id) ON DELETE SET NULL"
+    rounds }|--|| articles : "Many-to-One (article_id) ON DELETE SET NULL"
+
+    articles }|--|| games : "Many-to-One ON DELETE CASCADE"
+    articles }|--|| players : "Many-to-One (submitted_by) ON DELETE CASCADE"
+
+    votes }|--|| rounds : "Many-to-One ON DELETE CASCADE"
+    votes }|--|| players : "Many-to-One (voter_id) ON DELETE CASCADE"
+    votes }|--|| players : "Many-to-One (voted_for) ON DELETE CASCADE"
+
+    %% Constraints & Delete Actions
+    votes ||--o{ game_stats : "CHECK voter_id <> voted_for"
+    games ||--o{ rounds : "ON DELETE CASCADE"
+    rounds ||--o{ articles : "ON DELETE SET NULL"
+    rounds ||--o{ votes : "ON DELETE CASCADE"
+    game_stats ||--o{ votes : "ON DELETE CASCADE"
+
+    %% Representing Constraints as Lines
+    games ||--|| players : "CHECK min 2 players to start"
+    votes ||--|| votes : "CHECK voter_id <> voted_for"

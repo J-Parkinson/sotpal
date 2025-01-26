@@ -1,0 +1,74 @@
+schema
+
+lobby_status_enum -	in_lobby	in_game	post_game
+win_condition_enum -	first_to_rounds	first_to_points	best_of_rounds
+
+players
+	id	UUID	PRIMARY KEY	DEFAULT uuid_generate_v4()
+	username	TEXT	NOT NULL	
+	avatar	TEXT	NOT NULL
+	lobby_id	UUID	FK(lobbies)	NOT NULL	ON DELETE CASCADE	indexed
+	joined_at	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	join_order	SERIAL	NOT NULL	-- Added for rotating guessers
+	UNIQUE(username, lobby_id)
+	UNIQUE(avatar, lobby_id)
+	TRIGGER: delete after 24 hours
+	
+lobbies
+	id	UUID	PRIMARY KEY	DEFAULT uuid_generate_v4()
+	lobby_code	TEXT	UNIQUE	NOT NULL	indexed	uses set_lobby_code trigger
+	created_at	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	status	lobby_status_enum	NOT NULL	DEFAULT in_lobby
+	host_id	UUID	FK(players)	ON DELETE SET NULL	indexed
+	TRIGGER: delete after 24 hours
+	TRIGGER: reassign host randomly on delete, delete lobby if no players remain
+
+games
+	id	UUID	PRIMARY KEY	DEFAULT uuid_generate_v4()
+	lobby_id	UUID	FK(lobbies)	NOT NULL	ON DELETE CASCADE	indexed
+	created_at	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	guesser_rotation	UUID	FK(players)	DEFAULT NULL	indexed
+	rotating_guesser	BOOLEAN	NOT NULL	DEFAULT FALSE
+	win_condition	win_condition_enum	DEFAULT best_of_rounds
+	max_points	INT	DEFAULT NULL	CONSTRAINT: max_points > 0	CONSTRAINT: only populate iff win_condition = first_to_points
+	max_rounds	INT	DEFAULT 0	CONSTRAINT: max_rounds > 0	CONSTRAINT: only populate iff win_condition <> first_to_points
+	CONSTRAINT: (rotating_guesser = TRUE AND guesser_rotation IS NULL) OR (rotating_guesser = FALSE AND guesser_rotation IS NOT NULL)
+	CONSTRAINT: only one active game per lobby
+	TRIGGER: prevent game from starting with fewer than 2 players
+
+rounds
+	id	UUID	PRIMARY KEY	DEFAULT uuid_generate_v4()
+	game_id	UUID	FK(games)	NOT NULL	ON DELETE CASCADE	indexed
+	round_number	INT	NOT NULL
+	guesser_id	UUID	FK(players)	NOT NULL
+	created_at	TIMESTAMP	NOT NULL	DEFAULT CURRENT_TIMESTAMP
+	article_id	UUID	FK(articles)	NOT NULL	indexed
+	UNIQUE(game_id, round_number)
+	CONSTRAINT: round_number > 0
+	TRIGGER: populate article_id with an article which is not in the rounds table efficiently
+
+articles
+	id	UUID	PRIMARY KEY	DEFAULT uuid_generate_v4()
+	game_id	UUID	FK(games)	NOT NULL	ON DELETE CASCADE	indexed
+	submitted_by	UUID	FK(players)	NOT NULL
+	url	TEXT	NOT NULL
+
+game_stats
+	game_id	UUID	FK(games)	NOT NULL	ON DELETE CASCADE
+	player_id	UUID	FK(players)	NOT NULL	ON DELETE CASCADE
+	rounds_won	INT	NOT NULL	DEFAULT 0
+	correct_votes	INT	NOT NULL	DEFAULT 0
+	points	INT	GENERATED ALWAYS AS (rounds_won*100 + correct_votes*20) STORED
+	PK(game_id, player_id)
+	CONSTRAINT: rounds_won >= 0 AND correct_votes >= 0 AND points >= 0 -- Prevents negative scores
+
+votes
+	round_id	UUID	FK(rounds)	NOT NULL	ON DELETE CASCADE	indexed
+	voter_id	UUID	FK(players)	NOT NULL	ON DELETE CASCADE	indexed
+	voted_for	UUID	FK(players)	NOT NULL	indexed
+	is_correct	BOOL	NOT NULL	DEFAULT FALSE
+	TRIGGER: compute is_correct on insert/update using article_id for current round
+	TRIGGER: don't allow vote if voter_id is submitted_by for article_id of current round
+	TRIGGER: prevent votes if game is not active
+	PK(round_id, voter_id)
+	INDEX (round_id, voter_id) for query performance
