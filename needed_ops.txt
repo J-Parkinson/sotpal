@@ -1,0 +1,27 @@
+So.
+What different operations occur in this game?
+
+User loads website
+	- no DB operations
+User chooses avatar + username
+	- On creation add entry to players table
+User creates lobby
+	- On creation add entry to lobbies table
+	- On creation add entry to lobby_players table
+Other users choose avatar + username
+Other users join lobby
+User alerted about other users joining, their avatar and username
+User sets game settings locally, optionally choosing host
+User starts game
+Players (users) select Wikipedia articles from a random list of articles or by inputting URLs or names
+Other players alerted about players submitting articles (not *what* article though)
+Round starts when all articles are submitted or after a time period
+Article chosen at start of round, each player alerted about current article and host picked if random host enabled
+Each player except the host in a random order asked what the article is about briefly, every user sees the current person, timed amount of time
+Each player except the host in that same order asked to elaborate, every user sees the current person, host determines when each player's turn ends
+Each player (except the person whose article it is) votes on whose article it is
+Votes are counted up, player whose article it was is revealed, scores are shown, round ends
+	round begins if num rounds < current round, rotate host between players
+On final round end final scores are revealed
+On exit end game and clean up, kick people back into lobby
+Allow players to exit lobby, alert other users
