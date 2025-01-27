@@ -3,6 +3,7 @@
 import { MainLogo } from '@/components/logo/logo';
 import React from 'react';
 import Button from '@/components/button/button';
+import { createLobbyWithHost } from '@/game-logic/create-lobby';
 
 export const runtime = 'edge';
 export const preferredRegion = 'home';
@@ -14,7 +15,7 @@ export default function Home() {
       <MainLogo />
       <div className="p-5 flex flex-col items-center justify-center gap-5">
         <Button onClick={() => {}}>Start Game</Button>
-        <Button onClick={() => {}}>Join Game</Button>
+        <Button onClick={() => createLobbyWithHost('test', 'test')}>Join Game</Button>
       </div>
     </main>
   );
