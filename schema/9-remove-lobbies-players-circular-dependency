@@ -1,0 +1,38 @@
+ALTER TABLE players ADD COLUMN is_host BOOLEAN NOT NULL DEFAULT FALSE;
+
+CREATE UNIQUE INDEX unique_host_per_lobby ON players (lobby_id)
+WHERE is_host = TRUE;
+
+DROP TRIGGER IF EXISTS reassign_host_trigger ON players;
+DROP FUNCTION IF EXISTS reassign_host_or_delete_lobby;
+
+CREATE OR REPLACE FUNCTION reassign_host_or_delete_lobby() RETURNS TRIGGER AS $$
+DECLARE
+    new_host UUID;
+BEGIN
+    -- Check if the player being deleted is the host
+    IF OLD.is_host = TRUE THEN
+        -- Select a new host (any remaining player in the same lobby)
+        SELECT id INTO new_host 
+        FROM players 
+        WHERE lobby_id = OLD.lobby_id 
+        AND id <> OLD.id 
+        ORDER BY joined_at ASC 
+        LIMIT 1;
+
+        IF new_host IS NULL THEN
+            -- No players left, delete the lobby
+            DELETE FROM lobbies WHERE id = OLD.lobby_id;
+        ELSE
+            -- Assign new host
+            UPDATE players SET is_host = TRUE WHERE id = new_host;
+        END IF;
+    END IF;
+
+    RETURN OLD;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER reassign_host_trigger
+BEFORE DELETE ON players
+FOR EACH ROW EXECUTE FUNCTION reassign_host_or_delete_lobby();

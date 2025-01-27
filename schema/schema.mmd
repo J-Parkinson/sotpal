@@ -8,6 +8,7 @@ erDiagram
         UUID lobby_id "NOT NULL FK(lobbies) ON DELETE CASCADE | idx_players_lobby"
         TIMESTAMP joined_at "NOT NULL DEFAULT CURRENT_TIMESTAMP"
         SERIAL join_order "NOT NULL"
+        BOOLEAN is_host "NOT NULL DEFAULT FALSE | idx_unique_host_per_lobby"
     }
 
     lobbies {
@@ -15,7 +16,6 @@ erDiagram
         TEXT lobby_code "NOT NULL | idx_lobbies_code"
         TIMESTAMP created_at "NOT NULL DEFAULT CURRENT_TIMESTAMP"
         lobby_status_enum status "NOT NULL DEFAULT in_lobby"
-        UUID host_id "FK(players) ON DELETE SET NULL | idx_lobbies_host"
     }
 
     %% Games and Players Section
@@ -72,7 +72,6 @@ erDiagram
     game_stats }|--|| players : "Many-to-One ON DELETE CASCADE"
 
     players }|--|| lobbies : "Many-to-One ON DELETE CASCADE"
-    lobbies }|--|| players : "One-to-Many (host_id) ON DELETE SET NULL"
 
     rounds }|--|| games : "Many-to-One ON DELETE CASCADE"
     rounds }|--|| players : "Many-to-One (guesser_id) ON DELETE SET NULL"
@@ -92,6 +91,6 @@ erDiagram
     rounds ||--o{ votes : "ON DELETE CASCADE"
     game_stats ||--o{ votes : "ON DELETE CASCADE"
 
-    %% Representing Constraints as Lines
+    %% Representing Constraints
     games ||--|| players : "CHECK min 2 players to start"
     votes ||--|| votes : "CHECK voter_id <> voted_for"
