@@ -1,6 +1,7 @@
-import { sql } from '@vercel/postgres';
+import { sql, postgresConnectionString } from '@vercel/postgres';
 
 export const createLobbyWithHost = async (username: string, avatar: string | defaultAvatars) => {
+  console.log(postgresConnectionString('pool'));
   // Step 1: update DB to create a new lobby and get a lobby code
   const lobbyCodeResult = await sql`INSERT INTO lobbies DEFAULT VALUES RETURNING id, lobby_code`;
   const { lobbyId, lobbyCode } = lobbyCodeResult.rows[0];
